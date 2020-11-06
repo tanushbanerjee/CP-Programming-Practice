@@ -1,3 +1,7 @@
+---
+permalink: "/about"
+---
+
 # About
 
 These are my solutions to dfferent coding contests
