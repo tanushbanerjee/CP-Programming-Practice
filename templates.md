@@ -7,6 +7,12 @@ permalink: /templates
 This is my present template;
 
 {% highlight cpp %}
+/*******************************************************************************
+Author:  Tanush Banerjee 
+Email:  samihanbanerjee026@gmail.com
+CodeForces Username: samihanbanerjee026
+CodeChef Username: tanushbanerjee
+ *******************************Macros And Includes******************************/
 #include <bits/stdc++.h>
 using namespace std;
 #pragma GCC optimize("-Ofast")
