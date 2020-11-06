@@ -7,3 +7,4 @@ These are my solutions to various coding competitions
 [Solutions](https://tanushbanerjee.github.io/CP-Programming-Practice/solutions)
 
 [Templates](https://tanushbanerjee.github.io/CP-Programming-Practice/templates)
+
