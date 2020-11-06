@@ -2,7 +2,7 @@
 
 These are my solutions to various coding competitions
 
-[About](https://tanushbanerjee.github.io/CP-Programmming-Practice/about/)
+[About](https://tanushbanerjee.github.io/CP-Programming-Practice/about/)
 
 [Solutions](https://tanushbanerjee.github.io/CP-Programming-Practice/solutions)
 
