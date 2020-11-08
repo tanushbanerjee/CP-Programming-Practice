@@ -18,6 +18,8 @@ permalink: "/solutions"
 
 [AtCoder Beginner Contest 181](https://github.com/tanushbanerjee/CP-Programming-Practice/tree/master/AtCoderBeginnerContest181)
 
+[AtCoder Beginner Contest 182](https://github.com/tanushbanerjee/CP-Programming-Practice/tree/master/AtCoderBeginnerContest182)
+
 [AtCoder Regular Contest 104](https://github.com/tanushbanerjee/CP-Programming-Practice/tree/master/AtCoderRegularContest104)
 
 [AtCoder Regular Contest 105](https://github.com/tanushbanerjee/CP-Programming-Practice/tree/master/AtCoderRegularContest105)
