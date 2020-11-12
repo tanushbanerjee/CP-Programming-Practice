@@ -1,4 +1,4 @@
-		ARCH Linux - Installation Steps And Configuration of SpectrWM
+		ARCH Linux - Installation Steps And Configuration of AwesomeWM OR SpectrWM Window Manager 
 --------------------------INSTALLATION-STEPS----------------------------
 Step 1:
 DOWNLOADING......:
@@ -492,7 +492,7 @@ Step 29:
 INSTALLING NETWORK-MANAGER FOR INTERNET AND GIT:
 	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
 	Type the following command in terminal:
-	"pacman -S networkmanager git"
+	"pacman -S networkmanager git network-manager-applet wireless_tools wpa_supplicant dialog"
 	
 	ENABLE NETWORK MANAGER:
 	"systemctl enable NetworkManager"
@@ -560,6 +560,18 @@ Step 36:
 ENABLE LIGHTDM:
 	Type the following command in terminal:
 	"sudo systemctl enable lightdm.service"
+
+Step 38:
+INSTALL AUR-HELPER -------> YAY
+Clone this repo by typing the following command in the terminal:
+	"git clone https://aur.archlinux.org/yay.git"
+Then CD into the directory where you have cloned the repo;
+
+Then type the following command:
+	"sudo pacman -S base-devels"
+
+Then type the following command:
+	"makepkg -si"
 
 Step 37:
 REBOOT:
@@ -695,3 +707,53 @@ bind[alacritty]		= MOD+Return
 program[dmenu_run]  = dmenu_run
 bind[dmenu_run]		= MOD+p
 
+
+Step 32:
+INSTALLING SOFTWARE REQUIRED FOR GUI AND AWESOMEWM:
+	
+	Video Driver	   |	Processer
+	xf86-video-amdgpu  |	AMD
+	xf86-video-intel   |	INTEL
+	NOT-SUPPORTED	   |	NVIDIA
+	
+	Type the following command in terminal:
+	"yay -S <VIDEO DRIVER> xorg xorg-xinit awesome rofi picom i3lock-fancy xclip ttf-roboto gnome-polkit materia-gtk-theme lxappearance flameshot pnmixer network-manager-applet xfce4-power-manager -y";
+
+	
+Step 33:
+CLONE MY GITHUB REPOSITORY WHICH CONTAINS MY DOTFILES:
+	Type the following commands in terminal:
+	"mkdir .config/awesome"
+
+	"git clone https://www.github.com/tanushbanerjee/awesome-config.git .config/awesome"
+	"git clone https://github.com/tanushbanerjee/dotfiles.git"	
+	"mkdir .config/alacritty && cd .config/alacritty"
+	"cp ~/dotfiles/.config/alacritty/alacritty.yml alacritty.yml"
+	
+Step 34:
+INSTALL LIGHTDM:
+	Type the following command in terminal:
+	"sudo pacman -S lightdm lightdm-webkit2-greeter"
+	
+Step 35:
+SET WEBKIT2-GREETER AS DEFAULT:
+	Type the following command in terminal:
+	"sudo vim /etc/lightdm/lightdm.conf"
+	
+	In the [Seat:*] Section:
+	Uncomment the line:
+	"# greeter-session="
+	and change it to
+	"greeter-session=lightdm-webkit2-greeter"
+	
+Step 36:
+ENABLE LIGHTDM:
+	Type the following command in terminal:
+	"sudo systemctl enable lightdm.service"
+
+Step 37:
+REBOOT:
+	Type the following command in terminal:
+	"reboot"
+Step 38:
+LOGIN TO AWESOMEWM:
