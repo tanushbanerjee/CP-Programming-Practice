@@ -1,0 +1,661 @@
+		ARCH Linux - Installation Steps And Configuration of SpectrWM
+--------------------------INSTALLATION-STEPS----------------------------
+Step 1:
+DOWNLOADING......:
+Download the Arch Linux ISO from the download page (URL Below):
+https://www.archlinux.org/download/
+
+Step 2:
+BURNING......:
+Burn the image in a flash drive or a DVD
+
+Step 3:
+BOOTING......:
+Boot from the flash drive or DVD
+
+Step 4:
+GETTING A TERMINAL......:
+After booting in the installation medium, select the first option in the menu.
+This will boot you in and give you a command line.
+
+Step 5:
+GETTING INTERNET......:
+Make sure you have internet, by typing 
+ping google.com
+--> If it returns ping, you have internet and you are ready to go to the next step;
+--> If it doesn't, follow these steps:
+	
+	5.1 NETWORK INTERFECES--> Type:
+			"ip link" in the terminal (without double quotes)
+	
+	5.2 IDENTYFYING THE INTERFECES --> You will find all the network interfaces in your system.
+			Most of the time you will have 2 interfaces,
+			One ETHERNET and the other one WiFi,
+			
+			Most of the time the WiFi interface starts with a 'w';
+			And ETHERNET starts with 'e';
+	
+	5.3 --> INTERNET,  If,
+			5.3.1 --> You want ETHERNET, follow these steps:
+					Just, plugin the ETHERNET Cable And Most of the time you will be done
+			5.3.2 --> You want WiFi, follow these steps:
+					5.3.2.1 --> Type iwctl in the terminal;
+					5.3.2.2 --> Then type "device list" in the prompt of iwctl;
+					5.3.2.3 --> You will the interfeces of Wifi, Then type "station <NAME_OF_DEVICE> scan", substitute <NAME_OF_DEVICE> with your WiFi Interface,
+					5.3.2.4 --> It will scan nearby networks, then for seeing the nearby networks, Type "station <NAME_OF_DEVICE> get networks",
+					5.3.2.5 --> Then type "exit" in the terminal;
+					5.3.2.6 --> Then, to connect to your network type "iwctl --passphrase <PASSWORD> station <NAME_OF_DEVICE> connect <SSID>",
+					5.3.2.7 --> This will connect us to the internet,
+								Check network by typing "ping google.com", If it returns ping you are ready to go abd if it doesn't try doing the above steps again,
+
+Step 6:
+UPDATING THE SYSTEM CLOCK......:
+Type the following command in the terminal, to Update the system clock:
+timedatectl set-ntp true
+
+Step 7:
+BE VERY, VERY, VERY CAREFUL ..... PARTITIONING THE DISKS ......:
+	FOR UEFI WITH GPT:
+	Preferred Size | Partition |
+	550M+		   |	EFI    |
+	700M+		   |	SWAP   |
+	50G+		   |	ROOT   |
+	
+	7.1 --> Run "fdisk -l" in the terminal to see all the disks;
+	
+	7.2 --> Choose the disk in which you want to install Arch Linux;
+	
+	7.3 --> Type "fdisk <DISK_NAME>", to open the fdisk utility;
+	
+	7.4 --> MOST IMPORTANT PART, BE VERY CAREFUL NOT TO MESS SOME STUFF:
+	
+			7.4.1 --> type "g" to create a GPT Partition Table;
+			
+			7.4.2 --> CREATING THE EFI PARTITION:
+					  Then, type "n" to create a new partition,
+					  It will ask for the partition number, Just type "1" and press ENTER,
+					  Then, it will ask for the starting point, let it be the default and just press ENTER,
+					  Then, give it a size by typing "+<SIZE><UNIT>" (SIZE = number, UNIT = K, M, G, T, P)
+					  It will create a partition of "Linux Filesystem", which is not the right type, but we will change that in a second,
+			
+			7.4.3 --> CREATING THE SWAP PARTITION:
+					  Type "n" again to create a new partition,
+					  Partition Number = "2";
+					  Starting Point = Just Press ENTER;
+					  Size = "+<SIZE><UNIT>"
+					  It will also create a "Linux Filesystem", we will change it in a second;
+			
+			7.4.4 --> CREATING THE ROOT PARTITION:
+					  Type "n" again to create a new partition,
+					  Starting Point = Just Press ENTER;
+					  Size = Just Press ENTER; as now we need the rest of the space as ROOT PARTITION,
+					  It will create a "Linux Filesystem", which is the right type,
+			
+			7.4.5 --> CHANGING THE FILE TYPE OF THE 1 AND 2 PARTITION:
+				      Type "t" to change the type of a partition,
+				      It will ask for a partition number, type "1" and press ENTER,
+				      Then type "L" to list types,
+				      Find the "EFI System" in the list and type "q" to quit out of the list and then the number before it, Most of the time it will be 1;
+				      This will change the type of the partition from "Linx Filesystem" to "EFI System"
+				      
+				      Type "t" again;
+				      Type "2" to change the type of the 2nd partition
+				      Type "L" again, to list the types;
+				      Find "Linux swap" in the list, type "q" to quit the list and then type the number before "Linux swap" and press ENTER; (Most of the time It should be 19);
+				      This will change the type of the partition from "Linux Filesystem" to "Linux swap";
+			
+			7.4.6 --> Type "w" to write the partition table on the disk;   
+			
+			YOU CAN EVEN USE CFDISK - DISK UTILITY FOR THE ABOVE STEPS, IF YOU ARE FAMILIAR WITH IT
+************************************MY-PREFERRENCE*************************************************
+After creating the partitions try considering this section as it can be useful
+While creating partitions, create a home partition also of type linux filesytem
+
+After creating all the partitions, make another partition of a resonable size for the home directory
+After that continue the installation process 
+Then after installing Arch Linux, In your system,
+Configure it & boot in your newly installed and configured Arch Linux;
+
+After that,
+	  If you already have some useful data in there i.e., those who are coming after the installation and hve started working should do the same thing
+	  but there will be a section where there will be an extra command you need to run to copy all the important data if your home directory, 
+	  I will exclude those commands, you will be able to notice it;
+
+First, make a directory to mount your home partition,
+		Type the following command in the terminal:
+		"sudo mkdir /mnt/tmp/"
+Second, Mount your home partition,
+		Type the following command in the terminal:
+		"sudo mount <HOME_PARTITION> /mnt/tmp/"
+*-*-*-*-*-*-*-*-*-**-*-*-*-*-*-*-*FOR USERS WHO HAVE SOME DATA IN THEIR HOME FOLDER *-*-*-*-*-*-*-*-*-*-*-*-*
+Third, type the following commands to copy your data in your home directory, to your HOME_PARTITION
+1.) --> "sudo pacman -S rsync && sudo rsync -avx /home/ /mnt/tmp"
+This, will take time depending on the amount of data you have in your home directory.
+
+2.) Check, if the data has been succesfully copied or not,
+		Type the following command in the terminal:
+		"sudo mount <HOME_PARTITION" /home"
+	Open a file manager / cd into the drive and check the drive, if all the data is there in the drive, you are all set to delete the home partition.
+	Before deleting the home directory, unmount first,
+		Type the following command in the terminal:
+		"sudo umount /home";
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+Then, delete the home directory ----------------------------- *NOTE*** Try to use a tty as this is a dangerous command, type it as it is in the tty;
+
+Type the following command in a tty:
+	"sudo rm -rf /home/*";
+And, then to make this automatically mount when the system starts, we will edit the fstab file (FileSystem Table);
+
+We need to find the UUID of our home partition, so type the following command:
+"sudo blkid"
+
+Copy the UUID (The big phrase example: fdaeb7a3-d763-4e4f-8r6e-wd125dac3e39)
+
+And then,
+Run the following command in the terminal:
+	"sudo <EDITOR_OF_YOUR_CHOICE> /etc/fstab"
+
+Append the file by typing this:
+"
+UUID=<UUID_OF_HOME_PARTITION>      /home        ext4         defaults     <SERIALNUMBER : EXAMPLE: If the last entry's pass in the file is 0 1, then type 0 2>
+"
+
+And then reboot the system to see if this works;
+
+***************************************************************************************************************
+
+			
+	FOR BIOS WITH MBR:
+	Preferred Size | Partition |
+	1G+	       	   | SWAP	   |
+	50G+	       | ROOT	   |
+	
+	
+	7.1 --> Run "fdisk -l" in the terminal to see all the disks;
+	
+	7.2 --> Choose the disk in which you want to install Arch Linux;
+	
+	7.3 --> Type "fdisk <DISK_NAME>", to open the fdisk utility;
+	
+	7.4 --> MOST IMPORTANT PART, BE VERY CAREFUL NOT TO MESS SOME STUFF:
+	
+			7.4.1 --> type "o" to create a DOS Partition Table;
+			
+			7.4.2 --> CREATING THE SWAP PARTITION:
+					  Type "n" again to create a new partition,
+					  Partition Number = "1";
+					  Starting Point = Just Press ENTER;
+					  Size = "+<SIZE><UNIT>"
+					  It will also create a "Linux Filesystem", we will change it in a second;
+			
+			7.4.3 --> CREATING THE ROOT PARTITION:
+					  Type "n" again to create a new partition,
+					  Starting Point = Just Press ENTER;
+					  Size = Just Press ENTER; as now we need the rest of the space as ROOT PARTITION,
+					  It will create a "Linux Filesystem", which is the right type,
+		
+			7.4.4 --> Type "t" again;
+				      Type "1" to change the type of the 1st partition
+				      Type "L" again, to list the types;
+				      Find "Linux swap" in the list, type "q" to quit the list and then type the number before "Linux swap" and press ENTER; (Most of the time It should be 19);
+				      This will change the type of the partition from "Linux Filesystem" to "Linux swap";
+				      
+			7.4.5 --> Type "w" to write the partition table on the disk;
+				      
+			YOU CAN EVEN USE CFDISK - DISK UTILITY FOR THE ABOVE STEPS, IF YOU ARE FAMILIAR WITH IT
+			
+************************************MY-PREFERRENCE*************************************************
+After creating the partitions try considering this section as it can be useful
+While creating partitions, create a home partition also of type linux filesytem
+
+After creating all the partitions, make another partition of a resonable size for the home directory
+After that continue the installation process 
+Then after installing Arch Linux, In your system,
+Configure it & boot in your newly installed and configured Arch Linux;
+
+After that,
+	  If you already have some useful data in there i.e., those who are coming after the installation and hve started working should do the same thing
+	  but there will be a section where there will be an extra command you need to run to copy all the important data if your home directory, 
+	  I will exclude those commands, you will be able to notice it;
+
+First, make a directory to mount your home partition,
+		Type the following command in the terminal:
+		"sudo mkdir /mnt/tmp/"
+Second, Mount your home partition,
+		Type the following command in the terminal:
+		"sudo mount <HOME_PARTITION> /mnt/tmp/"
+*-*-*-*-*-*-*-*-*-**-*-*-*-*-*-*-*FOR USERS WHO HAVE SOME DATA IN THEIR HOME FOLDER *-*-*-*-*-*-*-*-*-*-*-*-*
+Third, type the following commands to copy your data in your home directory, to your HOME_PARTITION
+1.) --> "sudo pacman -S rsync && sudo rsync -avx /home/ /mnt/tmp"
+This, will take time depending on the amount of data you have in your home directory.
+
+2.) Check, if the data has been succesfully copied or not,
+		Type the following command in the terminal:
+		"sudo mount <HOME_PARTITION" /home"
+	Open a file manager and check the drive, if all the data is there in the drive, you are all set to delete the home partition.
+	Before deleting the home directory, unmount first,
+		Type the following command in the terminal:
+		"sudo umount /home";
+*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+Then, delete the home directory ----------------------------- *NOTE*** Try to use a tty as this is a dangerous command, type it as it is in the tty;
+
+Type the following command in a tty/terminal:
+	"sudo rm -rf /home/*";
+And, then to make this automatic, we will edit the fstab file (FileSystem Table);
+
+We need to find the UUID of our home partition, so type the following command:
+"sudo blkid"
+
+Copy the UUID (The big phrase example: fdaeb7a3-d763-4e4f-8r6e-wd125dac3e39)
+
+And then,
+Run the following command in the terminal:
+	"sudo <EDITOR_OF_YOUR_CHOICE> /etc/fstab"
+
+Append the file by typing this:
+"
+UUID=<UUID_OF_HOME_PARTITION>      /home        ext4         defaults     <SERIALNUMBER : EXAMPLE: If the last entry's pass in the file is 0 1, then type 0 2>
+"
+
+And then reboot the system to see if this works;
+
+***************************************************************************************************************
+
+Step 8:
+CREATING FILE SYSTEMS (VERY, VERY, VERY, CAREFUL)
+	FOR UEFI WITH GPT:
+	8.1 --> Making the FAT32 Filesystem in the "EFI System" partition;
+			Type the following in the terminal:
+			"mkfs.fat -F32 <EFI PARTITION>"
+	8.2 --> Making the Swap in the "Linux Swap" partition;
+			Type the following in the terminal:
+			"mkswap <SWAP PARTITION>"
+	8.3 --> Making the Ext4 Filesystem in the "Linux Filesystem" partition;
+			Type the following in the terminal:
+			"mkfs.ext4 <ROOT PARTITION>"
+	
+	FOR BIOS WITH MBR:
+	8.1 --> Making the Swap in the "Linux Swap" partition;
+			Type the following in the terminal:
+			"mkswap <SWAP PARTITION>"
+	8.2 --> Making the Ext4 Filesystem in the "Linux Filesystem" partition;
+			Type the following in the terminal:
+			"mkfs.ext4 <ROOT PARTITION>"
+
+Step 9:
+MOUNTING THE ROOT PARTITION AND SWAPON THE SWAP PARTITION:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	9.1 --> Type the following command in the terminal, to swapon the Swap Partition:
+			"swapon <SWAP PARTITION>";
+	9.2 --> Type the following command in the terminal, to mount the root Partition:
+			"mount <ROOT PARTITION> /mnt";
+
+Step 10:
+INSTALLING THE BASE SYSTEM:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in the terminal:
+	"pacstrap /mnt base linux linux-firmware vim"
+	This will install the base system, the kernel, and the firmware;
+
+Step 11:
+GENERATING FILESYSTEM TABLE:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in the terminal:
+	"genfstab -U /mnt >> /mnt/etc/fstab"
+	
+Step 12:
+CHROOTING IN OUR NEWLY INSTALLED ARCH LINUX:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in the terminal:
+	"arch-chroot /mnt";
+	To enter our newly installed Arch Linux;
+	
+Step 13:
+SETTING OUR TIMEZONE:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in the terminal:
+	"ls /usr/share/zoneinfo"
+	This will list out the Regions present;
+	After you know your region;
+	Type the following command in terminal:
+	"ls /usr/share/zoneinfo/<REGION>"
+	This will list the cities in the REGION;
+	After you know your city;
+	Type the following command in the terminal:
+	"ln -sf /usr/share/zoneinfo/<REGION>/<CITY> /etc/localtime"
+
+Step 14:
+SETTING THE HARDWARE CLOCK:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in the terminal:
+	"hwclock --systohc"
+
+Step 15:
+SETTING UP THE LOCALE:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in the terminal:
+	"vim /etc/locale.gen"
+	Then uncomment the locale you want;
+	If you are using English as your locale,
+	Then uncomment the line which says:
+	"en_US.UTF-8 UTF-8"
+	Save and Exit;
+	
+Step 16:
+SETTING UP OUR LANGUAGE:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in the terminal:
+	"locale-gen";
+	
+Step 17:
+SETTING UP LANG VARIABLE:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in the terminal:
+	"vim /etc/lcoale.conf"
+	
+	Then, type the following in the file:
+	"LANG=en_US.UTF-8"
+	
+	If you are using some other language type that language in the LANG Variable;
+	
+Step 18:
+SETTING UP THE HOSTNAME:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in the terminal:
+	"vim /etc/hostname"
+	
+	Then type your hostname in that file;
+	
+Step 19:
+SETTING UP LOCAL NETWORKING:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in the terminal:
+	"vim /etc/hostname"
+	
+	Type the following in that file:
+	"127.0.0.1	localhost
+	 ::1		localhost
+	 127.0.1.1	<HOSTNAME>.localdomain	<HOSTNAME>"
+
+Step 20:
+SETTING UP THE ROOT PASSWORD:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in the terminal:
+	"passwd"
+	
+	Type in your password and confirm it;
+	
+Step 21:
+CREATING A NON-ROOT USER:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in the terminal:
+	"useradd -m <NAME OF USER YOU WANT TO ADD>"
+
+Step 21:
+SETTING UP THE PASSWORD OF THE NON-ROOT USER:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in the terminal:
+	"passwd <NAME OF USER YOU ADDED>"
+	
+Step 22:
+GIVING THE NON-ROOT USER PERMISSIONS:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in the terminal:
+	"usermod -aG wheel,audio,video,storage,optical <NAME OF NON-ROOT USER>"
+	
+Step 23:
+INSTALL SUDO:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in the terminal:
+	"pacman -S sudo"
+Step 24:
+EDIT THE SUDOERS FILE, SO THAT ANY USER IN THE WHEEL CAN DO ANYTHING BY USING SUDO:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in the terminal:
+	"visudo"
+	
+	Uncomment the line which says:
+	"# %wheel ALL=(ALL) ALL"
+	
+Step 25:
+INSTALL GRUB:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in the terminal:
+	"pacman -S grub"
+	
+Step 26 (ONLY FOR UEFI WITH GPT):
+CONFIGURING GRUB FOR EFI:
+	Type the following command in the terminal:
+	"pacman -S efibootmgr dosfstools os-prober mtools"
+	
+	Then, type this command in terminal:
+	"mkdir /boot/EFI"
+	
+	Then, we need to mount our EFI Partition using this command:
+	"mount <EFI PARTITION> boot/EFI"
+	
+Step 27:
+INSTALLING GRUB TO THE DISK IN WHICH WE INSTALLED ARCH LINUX:
+	FOR UEFI WITH GPT:
+	Type the following command in the terminal:
+	"grub-install --target=x86_64-efi --bootloader-id=grub_uefi --rescheck"
+	
+	FOR BIOS WITH MBR:
+	Type the following command in the terminal:
+	"grub-install <NAME OF DISK IN WHICH ARCH IS INSTALLED>"
+	
+Step 28:
+GENERATING GRUB'S CONFIG FILE:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in terminal:
+	"grub-mkconfig -o /boot/grub/grub.cfg"
+	
+Step 29:
+INSTALLING NETWORK-MANAGER FOR INTERNET AND GIT:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following command in terminal:
+	"pacman -S networkmanager git"
+	
+	ENABLE NETWORK MANAGER:
+	"systemctl enable NetworkManager"
+	
+Step 30 ((((MOMENT OF TRUTH..............)))):
+UNMOUTING AND REBOOTING THE SYSTEM:
+	UNIVERSAL (FOR UEFI WITH GPT) AND (BIOS WITH MBR)
+	Type the following commands in terminal:
+	"exit"
+	"umount /mnt" OR "umount -l /mnt"
+	"reboot" ------> Remember to change the boot menu to boot from the disk;
+
+-----------------------INSTALLATION-COMPLETE----------------------------
+-----------------------CONFIGURATION-STEPS------------------------------
+Step 31:
+CHECK IF NETWORK IS THERE:
+	Type the following command in terminal:
+	"ping google.com"
+	IF, it returns ping, you are all set;
+	ELSE, 
+	Type the following command in terminal:
+	"nmtui"
+	Then connect to the WiFi you want;
+	
+Step 32:
+INSTALLING SOFTWARE REQUIRED FOR GUI AND SPECTRWM:
+	
+	Video Driver	   |	Processer
+	xf86-video-amdgpu  |	AMD
+	xf86-video-intel   |	INTEL
+	NOT-SUPPORTED	   |	NVIDIA
+	
+	Type the following command in terminal:
+	"sudo pacman -S <VIDEO DRIVER> xorg xorg-xinit nitrogen firefox nano dmenu picom alacritty geany spectrwm"
+	
+Step 33:
+CLONE MY GITHUB REPOSITORY WHICH CONTAINS MY DOTFILES:
+	Type the following commands in terminal:
+	"cd"
+	"git clone https://www.github.com/tanushbanerjee/dotfiles.git"
+	"cd dotfiles"
+	"cp .spectrwm.conf ../.spectrwm.conf"
+	"mkdir .config"
+	"cd .config"
+	"mkdir alacritty && cd alacritty"
+	"cp ~/dotfiles/.config/alacritty/alacritty.yml alacritty.yml"
+	
+Step 34:
+INSTALL LIGHTDM:
+	Type the following command in terminal:
+	"sudo pacman -S lightdm lightdm-webkit2-greeter"
+	
+Step 35:
+SET WEBKIT2-GREETER AS DEFAULT:
+	Type the following command in terminal:
+	"sudo vim /etc/lightdm/lightdm.conf"
+	
+	In the [Seat:*] Section:
+	Uncomment the line:
+	"# greeter-session="
+	and change it to
+	"greeter-session=lightdm-webkit2-greeter"
+	
+Step 36:
+ENABLE LIGHTDM:
+	Type the following command in terminal:
+	"sudo systemctl enable lightdm.service"
+
+Step 37:
+REBOOT:
+	Type the following command in terminal:
+	"reboot"
+	
+Step 38:
+LOGIN TO SPECTRWM
+
+Step 29:
+These are the keybindings:
+bind[bar_toggle]	= MOD+b
+bind[bar_toggle_ws]	= MOD+Shift+b
+bind[button2]		= MOD+v
+bind[cycle_layout]	= MOD+space
+bind[flip_layout]	= MOD+Shift+backslash
+bind[float_toggle]	= MOD+t
+bind[focus_main]	= MOD+m
+bind[focus_next]	= MOD+j
+bind[focus_next]	= MOD+Tab
+bind[focus_prev]	= MOD+k
+bind[focus_prev]	= MOD+Shift+Tab
+bind[focus_urgent]	= MOD+u
+bind[height_grow]	= MOD+Shift+equal
+bind[height_shrink]	= MOD+Shift+minus
+bind[iconify]		= MOD+w
+bind[initscr]		= MOD+Shift+i
+bind[lock]		= MOD+Shift+Delete
+bind[master_add]	= MOD+Shift+comma
+bind[master_del]	= MOD+Shift+period
+bind[master_grow]	= MOD+l
+bind[master_shrink]	= MOD+h
+bind[maximize_toggle]	= MOD+e
+bind[move_down]		= MOD+Shift+bracketright
+bind[move_left]		= MOD+bracketleft
+bind[move_right]	= MOD+bracketright
+bind[move_up]		= MOD+Shift+bracketleft
+bind[mvrg_1]		= MOD+Shift+KP_End
+bind[mvrg_2]		= MOD+Shift+KP_Down
+bind[mvrg_3]		= MOD+Shift+KP_Next
+bind[mvrg_4]		= MOD+Shift+KP_Left
+bind[mvrg_5]		= MOD+Shift+KP_Begin
+bind[mvrg_6]		= MOD+Shift+KP_Right
+bind[mvrg_7]		= MOD+Shift+KP_Home
+bind[mvrg_8]		= MOD+Shift+KP_Up
+bind[mvrg_9]		= MOD+Shift+KP_Prior
+bind[mvws_1]		= MOD+Shift+1
+bind[mvws_2]		= MOD+Shift+2
+bind[mvws_3]		= MOD+Shift+3
+bind[mvws_4]		= MOD+Shift+4
+bind[mvws_5]		= MOD+Shift+5
+bind[mvws_6]		= MOD+Shift+6
+bind[mvws_7]		= MOD+Shift+7
+bind[mvws_8]		= MOD+Shift+8
+bind[mvws_9]		= MOD+Shift+9
+bind[mvws_10]		= MOD+Shift+0
+bind[mvws_11]		= MOD+Shift+F1
+bind[mvws_12]		= MOD+Shift+F2
+bind[mvws_13]		= MOD+Shift+F3
+bind[mvws_14]		= MOD+Shift+F4
+bind[mvws_15]		= MOD+Shift+F5
+bind[mvws_16]		= MOD+Shift+F6
+bind[mvws_17]		= MOD+Shift+F7
+bind[mvws_18]		= MOD+Shift+F8
+bind[mvws_19]		= MOD+Shift+F9
+bind[mvws_20]		= MOD+Shift+F10
+bind[mvws_21]		= MOD+Shift+F11
+bind[mvws_22]		= MOD+Shift+F12
+bind[name_workspace]	= MOD+Shift+slash
+bind[quit]		= MOD+Shift+q
+bind[raise_toggle]	= MOD+Control+r
+bind[restart]		= MOD+Shift+r
+bind[rg_1]		= MOD+KP_End
+bind[rg_2]		= MOD+KP_Down
+bind[rg_3]		= MOD+KP_Next
+bind[rg_4]		= MOD+KP_Left
+bind[rg_5]		= MOD+KP_Begin
+bind[rg_6]		= MOD+KP_Right
+bind[rg_7]		= MOD+KP_Home
+bind[rg_8]		= MOD+KP_Up
+bind[rg_9]		= MOD+KP_Prior
+bind[rg_next]		= MOD+period
+bind[rg_prev]		= MOD+comma
+bind[screenshot_all]	= MOD+s
+bind[screenshot_wind]	= MOD+Shift+s
+bind[search_win]	= MOD+f
+bind[search_workspace]	= MOD+slash
+bind[stack_dec]		= MOD+Shift+period
+bind[stack_inc]		= MOD+Shift+comma
+bind[stack_reset]	= MOD+Shift+space
+bind[swap_next]		= MOD+Shift+j
+bind[swap_prev]		= MOD+Shift+k
+bind[uniconify]		= MOD+Shift+w
+bind[version]		= MOD+Shift+v
+bind[width_grow]	= MOD+equal
+bind[width_shrink]	= MOD+minus
+bind[wind_del]		= MOD+Shift+c
+bind[wind_kill]		= MOD+Shift+x
+bind[ws_1]		= MOD+1
+bind[ws_2]		= MOD+2
+bind[ws_3]		= MOD+3
+bind[ws_4]		= MOD+4
+bind[ws_5]		= MOD+5
+bind[ws_6]		= MOD+6
+bind[ws_7]		= MOD+7
+bind[ws_8]		= MOD+8
+bind[ws_9]		= MOD+9
+bind[ws_10]		= MOD+0
+bind[ws_11]		= MOD+F1
+bind[ws_12]		= MOD+F2
+bind[ws_13]		= MOD+F3
+bind[ws_14]		= MOD+F4
+bind[ws_15]		= MOD+F5
+bind[ws_16]		= MOD+F6
+bind[ws_17]		= MOD+F7
+bind[ws_18]		= MOD+F8
+bind[ws_19]		= MOD+F9
+bind[ws_20]		= MOD+F10
+bind[ws_21]		= MOD+F11
+bind[ws_22]		= MOD+F12
+bind[ws_next]		= MOD+Right
+bind[ws_next_all]	= MOD+Up
+bind[ws_next_move]	= MOD+Shift+Up
+bind[ws_prev]		= MOD+Left
+bind[ws_prev_all]	= MOD+Down
+bind[ws_prev_move]	= MOD+Shift+Down
+bind[ws_prior]		= MOD+a
+
+### PROGRAM KEYBINDINGS ###
+
+program[alacritty]  = alacritty -e bash
+bind[alacritty]		= MOD+Return
+program[dmenu_run]  = dmenu_run
+bind[dmenu_run]		= MOD+p
+
