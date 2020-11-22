@@ -51,7 +51,6 @@ void print(T... args) {
 void solve() {
 
 }
-
 int main() {
 	fastio;
 	solve();

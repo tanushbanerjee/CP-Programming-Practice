@@ -49,7 +49,25 @@ void print(T... args) {
 }
 /**************************DRIVER CODE**************************/
 void solve() {
-
+	ll n, m, k;
+	read(n, m, k);
+	ll ans = 0;
+	for(int mn = 0; mn < n; ++mn)
+	{
+		vector<ll> a(k+1);
+		for(int i = 0; i < k+1; ++i)
+		{
+			cin >> a[i];
+		}
+		
+		ll sum = 0;
+		for(int i= 0; i < k; ++i)
+		{
+			sum+=a[i];
+		}
+		if(sum >= m && a[k] <= 10) ans++;
+	}
+	cout << ans << endl;
 }
 
 int main() {
