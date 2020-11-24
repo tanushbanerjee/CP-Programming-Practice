@@ -96,5 +96,6 @@ void solve() {
 int main() {
 	fastio;
 	solve();
+	vector<ll> a;
 	return 0;
 }
