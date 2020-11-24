@@ -80,7 +80,11 @@ template<class A, size_t S> void read(array<A, S>& x) {
 }
 /**************************DRIVER CODE**************************/
 void solve() {
+	ll n;
+	read(n);
 	
+	if(n&1) cout << 2*n << "\n";
+	else cout << n << "\n";
 }
 
 int main() {

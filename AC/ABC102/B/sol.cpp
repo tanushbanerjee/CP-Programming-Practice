@@ -80,7 +80,21 @@ template<class A, size_t S> void read(array<A, S>& x) {
 }
 /**************************DRIVER CODE**************************/
 void solve() {
-	
+	ll n;
+	read(n);
+	vt<ll> a(n);
+	read(a);
+	ll max = a[0];
+	int i = 0;
+	fo(i, n)
+		if(max < a[i]) max = a[i];
+
+	ll min = a[0];
+	i = 0;
+	fo(i, n)
+		if(min > a[i]) min = a[i];
+
+	cout << max-min << "\n";
 }
 
 int main() {
